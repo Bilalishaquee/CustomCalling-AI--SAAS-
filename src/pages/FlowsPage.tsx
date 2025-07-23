@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Play, Pause, Copy, Trash2, Search } from 'lucide-react';
+import { Plus, Play, Pause, Copy, Trash2, Search, Eye } from 'lucide-react';
 import { useFlowStore } from '../store/flowStore';
 import { Flow } from '../types';
 import FlowBuilderPage from './FlowBuilderPage';
@@ -8,6 +8,19 @@ const FlowsPage: React.FC = () => {
   const { flows, setFlows, setCurrentFlow, currentFlow } = useFlowStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFlows, setSelectedFlows] = useState<string[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   useEffect(() => {
     // Mock data - replace with actual API call
@@ -134,7 +147,11 @@ const FlowsPage: React.FC = () => {
 
   const handleFlowSelect = (flow: Flow) => {
     setCurrentFlow(flow);
-    // Navigate to flow builder - this would be handled by routing in a real app
+    // On mobile, only allow viewing (read-only)
+    if (isMobile) {
+      // Show read-only view
+      return;
+    }
   };
 
   const handleBackToList = () => {
@@ -180,22 +197,26 @@ const FlowsPage: React.FC = () => {
   }
 
   return (
-    <div className="h-full bg-gray-950 p-6">
+    <div className="h-full bg-gray-950 p-3 lg:p-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 lg:mb-8 space-y-4 lg:space-y-0">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Voice Flows</h1>
-          <p className="text-gray-400">Create and manage your AI voice call flows</p>
+          <h1 className="text-2xl lg:text-3xl font-bold text-white mb-2">Voice Flows</h1>
+          <p className="text-gray-400 text-sm lg:text-base">
+            {isMobile ? 'Monitor your AI voice call flows' : 'Create and manage your AI voice call flows'}
+          </p>
         </div>
-        <button className="flex items-center space-x-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors">
+        {!isMobile && (
+          <button className="flex items-center space-x-2 px-4 lg:px-6 py-2 lg:py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors text-sm lg:text-base">
           <Plus className="w-5 h-5" />
           <span>New Flow</span>
         </button>
+        )}
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-gray-900 rounded-lg p-6 mb-6">
-        <div className="flex items-center space-x-4 mb-4">
+      <div className="bg-gray-900 rounded-lg p-4 lg:p-6 mb-4 lg:mb-6">
+        <div className="flex flex-col lg:flex-row lg:items-center space-y-4 lg:space-y-0 lg:space-x-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
@@ -203,10 +224,10 @@ const FlowsPage: React.FC = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search flows..."
-              className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600"
+              className="w-full pl-10 pr-4 py-2 lg:py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 text-sm lg:text-base"
             />
           </div>
-          <select className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600">
+          <select className="px-3 lg:px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 text-sm lg:text-base">
             <option value="">All Status</option>
             <option value="active">Active</option>
             <option value="paused">Paused</option>
@@ -216,48 +237,61 @@ const FlowsPage: React.FC = () => {
       </div>
 
       {/* Flow Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
         {filteredFlows.map((flow) => (
           <div
             key={flow.id}
-            className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors cursor-pointer"
+            className="bg-gray-900 border border-gray-800 rounded-lg p-4 lg:p-6 hover:border-gray-700 transition-colors cursor-pointer"
             onClick={() => handleFlowSelect(flow)}
           >
             {/* Status Badge */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3 lg:mb-4">
               <span className={`inline-flex items-center space-x-1 px-2 py-1 rounded-md text-xs font-medium border ${getStatusColor(flow.status)}`}>
                 {getStatusIcon(flow.status)}
                 <span className="capitalize">{flow.status}</span>
               </span>
-              <div className="flex items-center space-x-2">
-                <button className="p-1 text-gray-400 hover:text-white transition-colors">
+              <div className="flex items-center space-x-1 lg:space-x-2">
+                {isMobile && (
+                  <button className="p-1 text-gray-400 hover:text-white transition-colors">
+                    <Eye className="w-4 h-4" />
+                  </button>
+                )}
+                {!isMobile && (
+                  <>
+                    <button className="p-1 text-gray-400 hover:text-white transition-colors">
                   <Copy className="w-4 h-4" />
                 </button>
                 <button className="p-1 text-gray-400 hover:text-red-400 transition-colors">
                   <Trash2 className="w-4 h-4" />
                 </button>
+                  </>
+                )}
               </div>
             </div>
 
             {/* Flow Info */}
-            <h3 className="text-lg font-semibold text-white mb-2">{flow.name}</h3>
-            <p className="text-gray-400 text-sm mb-4 line-clamp-2">{flow.description}</p>
+            <h3 className="text-base lg:text-lg font-semibold text-white mb-2 truncate">{flow.name}</h3>
+            <p className="text-gray-400 text-xs lg:text-sm mb-3 lg:mb-4 line-clamp-2">{flow.description}</p>
 
             {/* Metrics */}
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-2 gap-3 lg:gap-4 mb-3 lg:mb-4">
               <div>
-                <div className="text-xs text-gray-500 uppercase tracking-wide">Blocks</div>
-                <div className="text-white font-semibold">{flow.blocks.length}</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">
+                  {isMobile ? 'Blks' : 'Blocks'}
+                </div>
+                <div className="text-white font-semibold text-sm lg:text-base">{flow.blocks.length}</div>
               </div>
               <div>
-                <div className="text-xs text-gray-500 uppercase tracking-wide">Variables</div>
-                <div className="text-white font-semibold">{flow.variables.length}</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">
+                  {isMobile ? 'Vars' : 'Variables'}
+                </div>
+                <div className="text-white font-semibold text-sm lg:text-base">{flow.variables.length}</div>
               </div>
             </div>
 
             {/* Timestamps */}
             <div className="text-xs text-gray-500">
-              Updated {new Date(flow.updatedAt).toLocaleDateString()}
+              {isMobile ? 'Updated' : 'Updated'} {new Date(flow.updatedAt).toLocaleDateString()}
             </div>
           </div>
         ))}
@@ -265,17 +299,19 @@ const FlowsPage: React.FC = () => {
 
       {/* Empty State */}
       {filteredFlows.length === 0 && (
-        <div className="text-center py-12">
-          <div className="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Plus className="w-12 h-12 text-gray-600" />
+        <div className="text-center py-8 lg:py-12">
+          <div className="w-16 h-16 lg:w-24 lg:h-24 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Plus className="w-8 h-8 lg:w-12 lg:h-12 text-gray-600" />
           </div>
-          <h3 className="text-xl font-semibold text-gray-300 mb-2">No flows found</h3>
-          <p className="text-gray-500 mb-6">
+          <h3 className="text-lg lg:text-xl font-semibold text-gray-300 mb-2">No flows found</h3>
+          <p className="text-gray-500 mb-4 lg:mb-6 text-sm lg:text-base px-4">
             {searchTerm ? 'Try adjusting your search terms' : 'Create your first voice flow to get started'}
           </p>
-          <button className="px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors">
+          {!isMobile && (
+            <button className="px-4 lg:px-6 py-2 lg:py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors text-sm lg:text-base">
             Create New Flow
           </button>
+          )}
         </div>
       )}
     </div>
