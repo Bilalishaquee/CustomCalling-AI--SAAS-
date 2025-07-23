@@ -8,13 +8,13 @@ const ConfigPanel: React.FC = () => {
 
   if (!selectedBlock) {
     return (
-      <div className="w-80 bg-gray-900 border-l border-gray-800 p-6 flex items-center justify-center">
+      <div className="w-80 lg:w-80 md:w-72 bg-gray-900 border-l border-gray-800 p-4 lg:p-6 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-            <div className="w-8 h-8 border-2 border-gray-600 rounded border-dashed"></div>
+          <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-6 h-6 lg:w-8 lg:h-8 border-2 border-gray-600 rounded border-dashed"></div>
           </div>
-          <h3 className="text-lg font-medium text-gray-300 mb-2">No Block Selected</h3>
-          <p className="text-sm text-gray-500">Select a block to configure its settings</p>
+          <h3 className="text-base lg:text-lg font-medium text-gray-300 mb-2">No Block Selected</h3>
+          <p className="text-xs lg:text-sm text-gray-500">Select a block to configure its settings</p>
         </div>
       </div>
     );
@@ -237,10 +237,10 @@ const ConfigPanel: React.FC = () => {
   };
 
   return (
-    <div className="w-80 bg-gray-900 border-l border-gray-800 flex flex-col">
+    <div className="w-80 lg:w-80 md:w-72 bg-gray-900 border-l border-gray-800 flex flex-col">
       {/* Header */}
       <div className="p-4 border-b border-gray-800 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">
+        <h3 className="text-base lg:text-lg font-semibold text-white">
           Configure Block
         </h3>
         <button
@@ -252,9 +252,9 @@ const ConfigPanel: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-4 overflow-y-auto">
+      <div className="flex-1 p-3 lg:p-4 overflow-y-auto">
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-xs lg:text-sm font-medium text-gray-300 mb-2">
             Block Label
           </label>
           <input
@@ -263,18 +263,18 @@ const ConfigPanel: React.FC = () => {
             onChange={(e) => updateBlock(selectedBlock.id, {
               data: { ...selectedBlock.data, label: e.target.value }
             })}
-            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600"
+            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 text-sm lg:text-base"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-xs lg:text-sm font-medium text-gray-300 mb-2">
             Description
           </label>
           <textarea
             value={config.description || ''}
             onChange={(e) => setConfig({ ...config, description: e.target.value })}
-            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600"
+            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 text-sm lg:text-base"
             rows={2}
             placeholder="Brief description of this block's purpose"
           />
@@ -284,17 +284,17 @@ const ConfigPanel: React.FC = () => {
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-gray-800 flex space-x-2">
+      <div className="p-3 lg:p-4 border-t border-gray-800 flex space-x-2">
         <button
           onClick={handleSave}
-          className="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors"
+          className="flex-1 flex items-center justify-center space-x-2 px-3 lg:px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors text-sm lg:text-base"
         >
           <Save className="w-4 h-4" />
           <span>Save</span>
         </button>
         <button
           onClick={handleDelete}
-          className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+          className="px-3 lg:px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
         >
           <Trash2 className="w-4 h-4" />
         </button>
